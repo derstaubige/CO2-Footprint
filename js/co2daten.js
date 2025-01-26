@@ -1,8 +1,12 @@
-// Sortiere die Daten anhand der Keys
-function sortiereDaten(key){
+// Sortiere die Daten anhand der Keys aufsteigend, außer absteigend = true
+function sortiereDaten(key, absteigend=false){
   //prüfe ob der übergebene Key, nach dem sortiert werden soll, existiert
   if(["Unternehmen", "Land", "CO2Ausstoß"].includes(key)){
-    return CO2Daten.sort((a,b) => (a[key] > b[key]) ? 1 : ((b[key] > a[key]) ? -1 : 0));
+    if(absteigend){
+      return CO2Daten.sort((a,b) => (a[key] < b[key]) ? 1 : ((b[key] < a[key]) ? -1 : 0));
+    }else{
+      return CO2Daten.sort((a,b) => (a[key] > b[key]) ? 1 : ((b[key] > a[key]) ? -1 : 0));
+    }
   }else{
     return CO2Daten;
   }  
@@ -30,13 +34,33 @@ function insertDaten(daten){
     tr.appendChild(tdLand);
     tr.appendChild(tdCO2Ausstoß);
 
-    tabelleBody.appendChild(tr)
+    tabelleBody.appendChild(tr);
   });
 }
 
 // Utility Funktion zum leeren der Tabelle
 function leereTabelle(){
   document.getElementById("CO2TabelleBody").innerHTML = "";
+}
+
+function toogleSortierung(spaltenID, absteigend=false){
+  // entferne alle bisherigen sortierungssymbole &xutri; 	&xdtri;
+  for (symbol of document.getElementsByClassName("sortiersymbol")){
+    symbol.remove();
+  }
+
+  // entferne alle sortierReihenefolgen aus den Javascript Daten
+  for (th of document.getElementsByTagName("th")){
+    th.dataset.sort = null;
+  }
+
+  // sortiere die daten neu
+  CO2DatenSortiert = sortiereDaten(spaltenID, absteigend);
+  // zeige die daten an
+  insertDaten(CO2DatenSortiert);
+  // setze das neue sortierungssymbol
+  th = document.getElementById(spaltenID);
+  th.dataset.sort = absteigend ? "absteigend" : "aufsteigend";
 }
 
 //co2 Daten
@@ -342,6 +366,19 @@ const CO2Daten = [
       "CO2Ausstoß": 543947.84
     }
   ];
+
+// Fügen OnClick Events zu den Tabellenheadern hinzu
+for (th of document.getElementsByTagName("th")) {
+  th.dataset.sort = null;
+  th.addEventListener("click", (event) => {
+    let absteigend = false;
+    if (event.srcElement.dataset.sort === "aufsteigend"){
+      let absteigend = true;
+    }
+    toogleSortierung(event.srcElement.dataset.id, absteigend)
+  })
+}
+
 
 var CO2DatenSortiert = sortiereDaten("CO2Ausstoß");
 insertDaten(CO2DatenSortiert)
