@@ -1,14 +1,14 @@
 // Sortiere die Daten anhand der Keys aufsteigend, außer absteigend = true
-function sortiereDaten(key, absteigend=false){
+function sortiereDaten(key, absteigend=false, sortiereDaten=CO2Daten){
   //prüfe ob der übergebene Key, nach dem sortiert werden soll, existiert
   if(["Unternehmen", "Land", "CO2Ausstoß"].includes(key)){
     if(absteigend){
-      return CO2Daten.sort((a,b) => (a[key] < b[key]) ? 1 : ((b[key] < a[key]) ? -1 : 0));
+      return sortiereDaten.sort((a,b) => (a[key] < b[key]) ? 1 : ((b[key] < a[key]) ? -1 : 0));
     }else{
-      return CO2Daten.sort((a,b) => (a[key] > b[key]) ? 1 : ((b[key] > a[key]) ? -1 : 0));
+      return sortiereDaten.sort((a,b) => (a[key] > b[key]) ? 1 : ((b[key] > a[key]) ? -1 : 0));
     }
   }else{
-    return CO2Daten;
+    return sortiereDaten;
   }  
 }
 
@@ -16,10 +16,10 @@ function sortiereDaten(key, absteigend=false){
 function insertDaten(daten){
   leereTabelle();
 
-  let tabelleBody = document.getElementById("CO2TabelleBody")
+  let tabelleBody = document.getElementById("CO2TabelleBody");
   daten.forEach(element => {
 
-    //erstelle neue Elemente für dieses Element
+    //erstelle neue Kindelemente für dieses Element aus der Tabelle
     let tr = document.createElement("tr");
     let tdUnternehmen = document.createElement("td");
     let tdLand = document.createElement("td");
@@ -43,32 +43,51 @@ function leereTabelle(){
   document.getElementById("CO2TabelleBody").innerHTML = "";
 }
 
-function toogleSortierung(spaltenID, absteigend=false){
-  // entferne alle bisherigen sortierungssymbole &xutri; 	&xdtri;
+function toogleSortierung(element, absteigend=false){
+
+  let spaltenID = element.dataset.id;
+
+  // entferne alle bisherigen Sortierungssymbole
   for (symbol of document.getElementsByClassName("sortiersymbol")){
     symbol.remove();
   }
 
-  // entferne alle Sortierreihenefolgen aus den Javascript Daten
-  for (th of document.getElementsByTagName("th")){
-    th.dataset.sort = null;
+  // entferne alle Sortierreihenfolgen aus den Javascript Daten Attributen
+  for (p of document.querySelectorAll('p[data-id]')){
+    p.dataset.sort = "null";
   }
 
   // sortiere die daten neu
-  CO2DatenSortiert = sortiereDaten(spaltenID, absteigend);
+  CO2DatenSortiertGefiltert = sortiereDaten(spaltenID, absteigend, CO2DatenSortiertGefiltert);
   
   // zeige die daten an
-  insertDaten(CO2DatenSortiert);
+  insertDaten(CO2DatenSortiertGefiltert);
   
   // setzte die neue Sortierreihenfolge
-  th = document.querySelector('th[data-id=' + spaltenID + ']');
-  th.dataset.sort = absteigend ? "absteigend" : "aufsteigend";
+  element.dataset.sort = absteigend ? "absteigend" : "aufsteigend";
 
-  // setze das neue sortierungssymbol
+  // setze das neue Sortierungssymbol
   let span = document.createElement("span");
-  span.setAttribute("class","sortiersymbol");
+  span.setAttribute("class","sortiersymbol ps-2");
   span.innerHTML = absteigend ? "&xdtri;" : "&xutri;";
-  th.appendChild(span);
+  element.appendChild(span);
+}
+
+// filter die Daten anhand der Usereingabe
+function filterDaten(element){
+  key = element.dataset.filtername;
+  wert = String(element.value).toLocaleLowerCase();
+
+  // filter die Quelldaten und füge danach eine eventuell vorhandene Sortierung ein
+  CO2DatenSortiertGefiltert = CO2Daten.filter(e => {
+    return e[key].toLowerCase().includes(wert);
+  });
+
+  let sortierelementId = document.getElementsByClassName("sortiersymbol")[0].parentElement.dataset.id;
+  let absteigend = document.getElementsByClassName("sortiersymbol")[0].parentElement.dataset.sort === "aufsteigend" ? false : true;
+  CO2DatenSortiertGefiltert = sortiereDaten(sortierelementId, absteigend, CO2DatenSortiertGefiltert);
+
+  insertDaten(CO2DatenSortiertGefiltert);
 }
 
 //co2 Daten
@@ -376,17 +395,38 @@ const CO2Daten = [
   ];
 
 // Fügen OnClick Events zu den Tabellenheadern hinzu
-for (th of document.getElementsByTagName("th")) {
-  th.dataset.sort = null;
-  th.addEventListener("click", (event) => {
+for (p of document.querySelectorAll("th p")) {
+  p.dataset.sort = null;
+  p.addEventListener("click", (event) => {
     let absteigend = false;
     if (event.srcElement.dataset.sort === "aufsteigend"){
       absteigend = true;
     }
-    toogleSortierung(event.srcElement.dataset.id, absteigend);
+    toogleSortierung(event.srcElement, absteigend);
   })
 }
 
-document.querySelector('th[data-id="CO2Ausstoß"]').dataset.sort = "aufsteigend";
-var CO2DatenSortiert = sortiereDaten("CO2Ausstoß");
-insertDaten(CO2DatenSortiert);
+// Füge das input Event für die Filter ein
+for (i of document.querySelectorAll('input[data-FilterName]')){
+  i.addEventListener("input", (event) => {
+    filterDaten(event.srcElement);
+  })
+}
+
+// Füge OnClick Events zu den Mülleimer hinzu, um die Filter zu löschen
+for (span of document.querySelectorAll('span[data-deleteFilter]')){
+  span.addEventListener("click", (event) =>{
+    deleteWert = event.srcElement.dataset.deletefilter;
+    document.querySelector('input[data-FilterName="' + deleteWert + '"]').value = "";
+    let sortierelementId = document.getElementsByClassName("sortiersymbol")[0].parentElement.dataset.id;
+    let absteigend = document.getElementsByClassName("sortiersymbol")[0].parentElement.dataset.sort === "aufsteigend" ? false : true;
+
+    // Lade die ungefilterten Daten und zeige sie an
+    CO2DatenSortiertGefiltert = sortiereDaten(sortierelementId, absteigend);
+    insertDaten(CO2DatenSortiertGefiltert);
+  });
+}
+
+document.querySelector('p[data-id="CO2Ausstoß"]').dataset.sort = "aufsteigend";
+var CO2DatenSortiertGefiltert = sortiereDaten("CO2Ausstoß");
+insertDaten(CO2DatenSortiertGefiltert);
