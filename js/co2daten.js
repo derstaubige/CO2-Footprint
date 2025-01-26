@@ -74,13 +74,19 @@ function toogleSortierung(element, absteigend=false){
 }
 
 // filter die Daten anhand der Usereingabe
-function filterDaten(element){
-  key = element.dataset.filtername;
-  wert = String(element.value).toLocaleLowerCase();
+function filterDaten(){
+  filterObject = {
+    "Land" : String(document.querySelector('input[data-FilterName="Land"]').value).toLowerCase(),
+    "Unternehmen" : String(document.querySelector('input[data-FilterName="Unternehmen"]').value).toLowerCase(),
+  }
 
   // filter die Quelldaten und füge danach eine eventuell vorhandene Sortierung ein
   CO2DatenSortiertGefiltert = CO2Daten.filter(e => {
-    return e[key].toLowerCase().includes(wert);
+    if(e["Land"].toLowerCase().includes(filterObject["Land"]) && e["Unternehmen"].toLowerCase().includes(filterObject["Unternehmen"])){
+      return true;
+    }else{
+      return false;
+    }
   });
 
   let sortierelementId = document.getElementsByClassName("sortiersymbol")[0].parentElement.dataset.id;
@@ -409,7 +415,7 @@ for (p of document.querySelectorAll("th p")) {
 // Füge das input Event für die Filter ein
 for (i of document.querySelectorAll('input[data-FilterName]')){
   i.addEventListener("input", (event) => {
-    filterDaten(event.srcElement);
+    filterDaten();
   })
 }
 
@@ -423,7 +429,7 @@ for (span of document.querySelectorAll('span[data-deleteFilter]')){
 
     // Lade die ungefilterten Daten und zeige sie an
     CO2DatenSortiertGefiltert = sortiereDaten(sortierelementId, absteigend);
-    insertDaten(CO2DatenSortiertGefiltert);
+    filterDaten()
   });
 }
 
