@@ -1,0 +1,14 @@
+:root, [data-bs-theme=light] {
+    /* --bs-body-color: red;
+    --bs-heading-color: red; */
+}
+
+:root, [data-bs-theme=dark] {
+    /* --bs-body-color: red;
+    --bs-heading-color: red; */
+} 
+
+.rtllink{
+    color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+    text-decoration: underline;
+}
