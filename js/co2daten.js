@@ -29,6 +29,7 @@ function insertDaten(daten){
     tdUnternehmen.innerText = element['Unternehmen'];
     tdLand.innerText = element['Land'];
     tdCO2Ausstoß.innerText = Number(element['CO2Ausstoß']).toLocaleString("de-DE", {minimumFractionDigits: 2});
+    tdCO2Ausstoß.setAttribute("class","text-end");
 
     tr.appendChild(tdUnternehmen);
     tr.appendChild(tdLand);
