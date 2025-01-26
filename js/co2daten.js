@@ -1,12 +1,46 @@
-// lade die Daten aus der co2daten.txt Datei
-
+// Sortiere die Daten anhand der Keys
+function sortiereDaten(key){
+  //prüfe ob der übergebene Key, nach dem sortiert werden soll, existiert
+  if(["Unternehmen", "Land", "CO2Ausstoß"].includes(key)){
+    return CO2Daten.sort((a,b) => (a[key] > b[key]) ? 1 : ((b[key] > a[key]) ? -1 : 0));
+  }else{
+    return CO2Daten;
+  }  
+}
 
 // Füge die Daten in die Tabelle ein
+function insertDaten(daten){
+  leereTabelle()
+
+  let tabelleBody = document.getElementById("CO2TabelleBody")
+  daten.forEach(element => {
+
+    //erstelle neue Elemente für dieses Element
+    let tr = document.createElement("tr");
+    let tdUnternehmen = document.createElement("td");
+    let tdLand = document.createElement("td");
+    let tdCO2Ausstoß = document.createElement("td");
+
+    // fülle die Spalten mit Werten
+    tdUnternehmen.innerText = element['Unternehmen'];
+    tdLand.innerText = element['Land'];
+    tdCO2Ausstoß.innerText = Number(element['CO2Ausstoß']).toLocaleString("de-DE", {minimumFractionDigits: 2});
+
+    tr.appendChild(tdUnternehmen);
+    tr.appendChild(tdLand);
+    tr.appendChild(tdCO2Ausstoß);
+
+    tabelleBody.appendChild(tr)
+  });
+}
 
 // Utility Funktion zum leeren der Tabelle
+function leereTabelle(){
+  document.getElementById("CO2TabelleBody").innerHTML = "";
+}
 
 //co2 Daten
-const csvDaten = [
+const CO2Daten = [
     {
       "Unternehmen": "GreenPlanet",
       "Land": "Indonesia",
@@ -307,4 +341,7 @@ const csvDaten = [
       "Land": "Thailand",
       "CO2Ausstoß": 543947.84
     }
-  ]
+  ];
+
+var CO2DatenSortiert = sortiereDaten("CO2Ausstoß");
+insertDaten(CO2DatenSortiert)
