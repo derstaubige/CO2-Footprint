@@ -419,9 +419,9 @@ for (i of document.querySelectorAll('input[data-FilterName]')){
     // Ändere das Symbol des Buttons um anzuzueigen, dass hier gerade gefiltert wird 
     let filterName = event.srcElement.dataset.filtername;
     if(event.srcElement.value){
-      document.querySelector('button[data-FilterButton="' + filterName +'"]').innerHTML = "&#9930;"
+      document.querySelector('button[data-FilterButton="' + filterName +'"]').innerHTML = "&#9930;";
     }else{
-      document.querySelector('button[data-FilterButton="' + filterName +'"]').innerHTML = "&#9929;"
+      document.querySelector('button[data-FilterButton="' + filterName +'"]').innerHTML = "&#9929;";
     }
     filterDaten();
   })
@@ -434,7 +434,7 @@ for (span of document.querySelectorAll('span[data-deleteFilter]')){
     // lösche den Inhalt des Filter Inputs
     document.querySelector('input[data-FilterName="' + deleteWert + '"]').value = "";
     // Ändere das Symbol
-    document.querySelector('button[data-FilterButton="' + deleteWert +'"]').innerHTML = "&#9929;"
+    document.querySelector('button[data-FilterButton="' + deleteWert +'"]').innerHTML = "&#9929;";
     let sortierelementId = document.getElementsByClassName("sortiersymbol")[0].parentElement.dataset.id;
     let absteigend = document.getElementsByClassName("sortiersymbol")[0].parentElement.dataset.sort === "aufsteigend" ? false : true;
 
