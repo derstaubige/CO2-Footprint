@@ -438,9 +438,10 @@ for (span of document.querySelectorAll('span[data-deleteFilter]')){
     let sortierelementId = document.getElementsByClassName("sortiersymbol")[0].parentElement.dataset.id;
     let absteigend = document.getElementsByClassName("sortiersymbol")[0].parentElement.dataset.sort === "aufsteigend" ? false : true;
 
-    // Lade die ungefilterten Daten und zeige sie an
-    CO2DatenSortiertGefiltert = sortiereDaten(sortierelementId, absteigend);
+    // Filtere und Lade die Daten und zeige sie an
     filterDaten()
+    CO2DatenSortiertGefiltert = sortiereDaten(sortierelementId, absteigend, CO2DatenSortiertGefiltert);
+    insertDaten(CO2DatenSortiertGefiltert)
   });
 }
 
