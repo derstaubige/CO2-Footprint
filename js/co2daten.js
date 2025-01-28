@@ -9,7 +9,7 @@ function sortiereDaten(key, absteigend=false, sortiereDaten=CO2Daten){
     }
   }else{
     return sortiereDaten;
-  }  
+  }
 }
 
 // Füge die Daten in die Tabelle ein
@@ -439,9 +439,9 @@ for (span of document.querySelectorAll('span[data-deleteFilter]')){
     let absteigend = document.getElementsByClassName("sortiersymbol")[0].parentElement.dataset.sort === "aufsteigend" ? false : true;
 
     // Filtere und Lade die Daten und zeige sie an
-    filterDaten()
+    filterDaten();
     CO2DatenSortiertGefiltert = sortiereDaten(sortierelementId, absteigend, CO2DatenSortiertGefiltert);
-    insertDaten(CO2DatenSortiertGefiltert)
+    insertDaten(CO2DatenSortiertGefiltert);
   });
 }
 
