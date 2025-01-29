@@ -44,7 +44,7 @@ function leereTabelle(){
   document.getElementById("CO2TabelleBody").innerHTML = "";
 }
 
-function toogleSortierung(element, absteigend=false){
+function toggleSortierung(element, absteigend=false){
 
   let spaltenID = element.dataset.id;
 
@@ -409,7 +409,7 @@ for (p of document.querySelectorAll("th p")) {
     if (event.srcElement.dataset.sort === "aufsteigend"){
       absteigend = true;
     }
-    toogleSortierung(event.srcElement, absteigend);
+    toggleSortierung(event.srcElement, absteigend);
   })
 }
 
